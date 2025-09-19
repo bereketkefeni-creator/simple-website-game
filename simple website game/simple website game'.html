@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bereket Kefeni</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(to right, #0a0a23, #001f3f);
+      color: #ffffff;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .intro {
+      animation: fadeIn 1.5s ease-out forwards;
+      opacity: 0;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      color: #ccc;
+    }
+
+    canvas {
+      background-color: #111;
+      border: 2px solid #fff;
+    }
+
+    .logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 60px;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Replace 'your-logo.png' with the actual path to your logo -->
+  <img src="your-logo.png" alt="Logo" class="logo" />
+
+  <div class="intro">
+    <h1>Bereket Kefeni</h1>
+    <p>Innovator • Engineer • Game Builder</p>
+  </div>
+
+  <canvas id="game" width="400" height="400"></canvas>
+
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const gridSize = 20;
+    let snake = [{ x: 200, y: 200 }];
+    let direction = { x: gridSize, y: 0 };
+    let food = { x: 100, y: 100 };
+
+    function drawRect(x, y, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, gridSize, gridSize);
+    }
+
+    function drawGame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawRect(food.x, food.y, "red");
+
+      const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+      snake.unshift(head);
+
+      if (head.x === food.x && head.y === food.y) {
+        food = {
+          x: Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize,
+          y: Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize,
+        };
+      } else {
+        snake.pop();
+      }
+
+      snake.forEach((segment, i) => {
+        drawRect(segment.x, segment.y, i === 0 ? "lime" : "green");
+      });
+
+      if (
+        head.x < 0 || head.x >= canvas.width ||
+        head.y < 0 || head.y >= canvas.height ||
+        snake.slice(1).some(s => s.x === head.x && s.y === head.y)
+      ) {
+        alert("Game Over!");
+        snake = [{ x: 200, y: 200 }];
+        direction = { x: gridSize, y: 0 };
+      }
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowUp" && direction.y === 0) direction = { x: 0, y: -gridSize };
+      if (e.key === "ArrowDown" && direction.y === 0) direction = { x: 0, y: gridSize };
+      if (e.key === "ArrowLeft" && direction.x === 0) direction = { x: -gridSize, y: 0 };
+      if (e.key === "ArrowRight" && direction.x === 0) direction = { x: gridSize, y: 0 };
+    });
+
+    setInterval(drawGame, 100);
+  </script>
+</body>
+</html>
